@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
+use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,8 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        $mhs = Mahasiswa::orderBy('updated_at', 'desc')->paginate(5);
+        $mhs = Mahasiswa::orderBy('updated_at', 'desc')->get();
+        // $mhs = Mahasiswa::orderBy('updated_at', 'desc')->paginate(5);
         return view('Mahasiswa.index', ['mahasiswas' => $mhs]);
     }
 
@@ -34,43 +36,51 @@ class MahasiswaController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
 
         // Generate NIM
         $mahasiswas = Mahasiswa::all();
-        if ($mahasiswas->count() > 0) {
-            $last = $mahasiswas->last();
-            $nim = $last->nim + 1;
-        } else {
-            $nim = 20200121001;
-        }
+        // if ($mahasiswas->count() > 0) {
+        //     $last = $mahasiswas->last();
+        //     $nim = $last->nim + 1;
+        // } else {
+        //     $nim = 20200121001;
+        // }
 
         // Validate Data Mahasiswa
-        $request->validate([
-            'nama_mhs' => 'required|unique:mahasiswas|max:100|min:3',
-            'email' => 'required|unique:mahasiswas|max:100|min:3',
-            'umur' => 'integer|required|max:100',
+        $request->validate([ 
+            'email' => 'required|unique:mahasiswa|max:100|min:3',
             'alamat' => 'required'
         ]);
 
         //  Insert Data Mahasiswa
         try {
             $mhs = new Mahasiswa;
-            $mhs->nim = $nim;
-            $mhs->nama_mhs = $request->nama_mhs;
+            // $mhs->nim = $nim;
+            $mhs->nama_mahasiswa = $request->nama_mahasiswa;
             $mhs->email = $request->email;
-            $mhs->umur = $request->umur;
+            $mhs->no_tlp = $request->no_tlp;
             $mhs->alamat = $request->alamat;
             $mhs->save();
+            
+
+            $user = new user; 
+            $user->name = $request->nama_mahasiswa; 
+            $user->email = $request->email; 
+            $user->password = bcrypt('12345678'); 
+            $user->role = 'mahasiswa'; 
+            $user->save();
+            
         } catch (\Throwable $th) {
             // return error
             return redirect('/mahasiswa')->with('error', $th->getMessage());
         }
       
         //    Redirect to Index
-        return redirect('/mahasiswa')->with('success', 'Data Mahasiswa ' . $request->nama_mhs . ' Berhasil Ditambahkan');
+        return redirect('/mahasiswa')->with('success', 'Data Mahasiswa ' . $request->nama_mahasiswa . ' Berhasil Ditambahkan');
     }
 
     /**
@@ -91,8 +101,10 @@ class MahasiswaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        return "HOOH";
+    { 
+        // $allmahasiswa = mahasiswa::get(); 
+        $mahasiswa = mahasiswa::findorfail($id);
+        return view('Mahasiswa.edit', compact('mahasiswa')); 
     }
 
     /**
@@ -104,7 +116,28 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all());
+        $mahasiswa = mahasiswa::findorfail($id);  
+        // return response()->json([
+        //     'data' => $mahasiswa
+        //   ]);
+        $user = user::where('email', $mahasiswa->email)->first(); 
+        $user->email = $request->email;
+        $user->save(); 
+
+        $mahasiswa->nama_mahasiswa = $request->nama_mahasiswa;
+        $mahasiswa->email = $request->email;
+        $mahasiswa->no_tlp = $request->no_tlp;
+        $mahasiswa->alamat = $request->alamat;
+        $mahasiswa->save(); 
+
+        
+
+
+        
+ 
+        return redirect('/mahasiswa')->with('success', 'Data Mahasiswa ' . $request->nama_mahasiswa . ' Berhasil Diubah');
+ 
     }
 
     /**
@@ -115,6 +148,11 @@ class MahasiswaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        
+        $mahasiswa = mahasiswa::where('id', $id)->get(); 
+        $user = user::where('email', $mahasiswa[0]->email)->get(); 
+        $user->each->delete(); 
+        $mahasiswa->each->delete(); 
+        return redirect('/mahasiswa');
     }
 }

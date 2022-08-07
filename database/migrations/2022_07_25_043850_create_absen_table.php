@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mahasiswas', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('nim')->unique();
-            $table->string('nama_mhs');
-            $table->string('email')->unique();
-            $table->integer('umur');
-            $table->text('alamat');
+        Schema::create('absen', function (Blueprint $table) {
+            $table->id();              
+            $table->time('waktu_absen')->nullable();
+            $table->date('tanggal_absen');//tambahan untuk mngecek 
+            $table->integer('mahasiswa_id');
+            $table->integer('matakuliah_id');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mahasiswas');
+        Schema::dropIfExists('absen');
     }
 };

@@ -33,6 +33,7 @@
 </head>
 
 <body>
+
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -135,6 +136,9 @@
                                 <span class="hide-menu">Dashboard</span>
                             </a>
                         </li>
+
+                        
+                    @if (Auth::user()->role== 'admin')
                         <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('mahasiswa*')) active @endif"
                                 href="{{ url('/mahasiswa') }}" aria-expanded="false">
@@ -142,11 +146,58 @@
                                 <span class="hide-menu">Mahasiswa</span>
                             </a>
                         </li>
+                           <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('dosen*')) active @endif"
+                                href="{{ url('/dosen') }}" aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Dosen</span>
+                            </a>
+                        </li>
+                         <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('matakuliah*')) active @endif"
+                                href="{{ url('/matakuliah') }}" aria-expanded="false">
+                                <i class="fa fa-book" aria-hidden="true"></i>
+                                <span class="hide-menu">Matakuliah</span>
+                            </a>
+                        </li>
+                         <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('semester*')) active @endif"
+                                href="{{ url('/semester') }}" aria-expanded="false">
+                                <i class="fa fa-plane" aria-hidden="true"></i>
+                                <span class="hide-menu">Semester</span>
+                            </a>
+                        </li>
+                      
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('jadwal*')) active @endif"
+                                href="{{ url('/jadwal') }}" aria-expanded="false">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                <span class="hide-menu">jadwal</span>
+                            </a>
+                        </li>
+                      
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('kontrakmatakuliah*')) active @endif"
+                                href="{{ url('/kontrakmatakuliah') }}" aria-expanded="false">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                <span class="hide-menu">kontrakmatakuliah</span>
+                            </a>
+                        </li>
+                      
+                    @elseif(Auth::user()->role == 'dosen')
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link  @if (Request::is('absen*')) active @endif"
+                                href="{{ url('/absen') }}" aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span class="hide-menu">Absen</span>
+                            </a>
+                        </li> 
+                    @endif
                         <li class="text-center p-20 upgrade-btn">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
 
-                                <a href="route('logout')"
+                                <a class="btn btn-danger" href="route('logout')"
                                     onclick="event.preventDefault();
                                                     this.closest('form').submit();">
                                     {{ __('Log Out') }}
@@ -203,8 +254,7 @@
                 <!-- ============================================================== -->
                 <!-- footer -->
                 <!-- ============================================================== -->
-                <footer class="footer text-center"> 2022 © Simple Admin Panel by <a
-                        href="https://github.com/grimsalphadev">M Haikal Alfandi S</a>
+                <footer class="footer text-center"> 2022 ©
                 </footer>
                 <!-- ============================================================== -->
                 <!-- End footer -->

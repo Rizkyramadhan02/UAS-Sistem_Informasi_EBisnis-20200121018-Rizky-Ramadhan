@@ -1,7 +1,7 @@
 @extends('../layouts/mainapp')
 
-@section('title', 'List Mahasiswa')
-@section('pagetitle', 'Mahasiswa')
+@section('title', 'List matakuliah')
+@section('pagetitle', 'matakuliah')
 
 @section('container')
 
@@ -24,41 +24,41 @@
 @endif
 
 
-<h1 class="mb-3">List Mahasiswa</h1>
+<h1 class="mb-3">List matakuliah</h1>
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Tambah Data Mahasiswa
+    Tambah Data matakuliah
 </button>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
 
         {{-- <div class="position-relative mb-5">
-                <div class="position-absolute top-0 end-0">{{ $mahasiswas->links() }}
+                <div class="position-absolute top-0 end-0">{{ $matakuliah->links() }}
 </div>
 </div> --}}
 <thead>
-    <th>No</th>
-    {{-- <th>Nim</th> --}}
-    <th>Nama Mahasiswa</th>
-    <th>Alamat</th>
-    <th>No telp</th>
-    <th>Email</th>
-    <th>Action</th>
+    <th>No</th> 
+    <th>Nama matakuliah</th> 
+    <th>SKS matakuliah</th> 
+    <th>Dosen Pembimbing matakuliah</th> 
+    <th>action</th>
 </thead>
 @php($no = 1)
-@foreach ($mahasiswas as $mhs)
+@foreach ($matakuliah as $matakuliah)
 <tr>
-    <td>{{ $no }}</td>
-    {{-- <td>{{ $mhs->nim }}</td> --}}
-    <td><a href="/mahasiswa/{{ $mhs->id }}">{{ $mhs->nama_mahasiswa }}</a></td>
-    <td>{{ $mhs->alamat }}</td>
-    <td>{{ $mhs->no_tlp }}</td>
-    <td>{{ $mhs->email }}</td> 
+    <td>{{ $no }}</td>  
+    <td><a href="/matakuliah/{{ $matakuliah->id }}">{{ $matakuliah->nama_matakuliah }}</a></td> 
+    <td>{{ $matakuliah->sks }}</a></td> 
+    <td> @foreach ($dosen as $data)
+            @if($data->id == $matakuliah->dosen_id)
+                {{ $data->nama }}
+            @endif
+         @endforeach</a></td> 
     <td>
-         <form action="{{ route('mahasiswa.destroy', $mhs->id) }}" method="POST">  
-              <a href="{{ route('mahasiswa.edit',  $mhs->id) }}" class="btn btn-secondary  btn-xs"  > <i class="bi bi-pencil"></i></a> 
+         <form action="{{ route('matakuliah.destroy', $matakuliah->id) }}" method="POST"> 
+            <a href="{{ route('matakuliah.edit',  $matakuliah->id) }}" class="btn btn-secondary  btn-xs"  > <i class="bi bi-pencil"></i></a> 
               @csrf
              @method('DELETE')
              <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-danger deleteconfirm"><i class="bi bi-trash"></i></button>
@@ -71,49 +71,44 @@
 </div>
 
 
-
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="{{ route('mahasiswa.store') }}" method="post">
+        <form action="{{ route('matakuliah.store') }}" method="post">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Tambah Data Mahasiswa</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Tambah Data matakuliah</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Mahasiswa</label>
-                        <input type="text" class="form-control" id="nama" name="nama_mahasiswa">
-                        @error('nama_mahasiswa')
+                        <label for="nama_matakuliah" class="form-label">Nama matakuliah</label>
+                        <input type="text" class="form-control" id="nama_matakuliah" name="nama_matakuliah">
+                        @error('nama_matakuliah')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
-                    </div>
-                    
+                    </div> 
+                     <div class="mb-3">
+                        <label for="sks" class="form-label">sks matakuliah</label>
+                        <input type="text" class="form-control" id="sks" name="sks">
+                        @error('sks')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div> 
                     <div class="mb-3">
-                        <label for="alamat" class="form-label">Alamat Mahasiswa</label>
-                        <textarea class="form-control" id="alamat" name="alamat"></textarea>
-                        @error('alamat')
+                        <label for="nama" class="form-label">Nama Dosen </label>
+                         <select class=" form-control block "
+                            name="dosen_id" id="dosen_id" required >
+                            @foreach ($dosen as $data)
+                                <option value="{{ $data->id }}" >
+                                    {{ $data->nama }}</option>
+                            @endforeach
+                        </select>
+                        @error('dosen_id')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="no_tlp" class="form-label">no_tlp Mahasiswa</label>
-                        <input type="number" class="form-control" id="no_tlp" name="no_tlp">
-                        @error('no_tlp')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Mahasiswa</label>
-                        <input type="email" class="form-control" id="email" name="email">
-                        @error('email')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    </div> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -127,13 +122,5 @@
 
 
 
-
-
  
-
-
-{{-- @error('nama')
-          <div class="alert alert-danger">{{ $message }}</div>
-@enderror --}}
 @endsection
-
